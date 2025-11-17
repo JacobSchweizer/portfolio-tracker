@@ -3,6 +3,7 @@ import com.jacobschweizer.portfolio_tracker.dto.PortfolioResponse;
 import com.jacobschweizer.portfolio_tracker.dto.CreatePortfolioRequest;
 import com.jacobschweizer.portfolio_tracker.dto.UpdatePortfolioRequest;
 import com.jacobschweizer.portfolio_tracker.dto.PortfolioSummaryResponse;
+import jakarta.validation.Valid;
 
 
 
@@ -32,7 +33,7 @@ public class PortfolioController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PortfolioResponse createPortfolio(@RequestBody CreatePortfolioRequest request) {
+    public PortfolioResponse createPortfolio(@RequestBody @Valid CreatePortfolioRequest request) {
         Portfolio created = portfolioService.createPortfolio(request.name);
         return toResponse(created);
     }
@@ -66,7 +67,7 @@ public class PortfolioController {
 
     // PUT /api/portfolios/{id}  -> update portfolio name
     @PutMapping("/{id}")
-    public PortfolioResponse updatePortfolio(@PathVariable Long id, @RequestBody UpdatePortfolioRequest request) {
+    public PortfolioResponse updatePortfolio(@PathVariable Long id, @RequestBody @Valid UpdatePortfolioRequest request) {
       Portfolio updated = portfolioService.updatePortfolioName(id, request.name);
       return toResponse(updated);
     }

@@ -1,4 +1,6 @@
 package com.jacobschweizer.portfolio_tracker.controller;
+import jakarta.validation.Valid;
+
 
 import com.jacobschweizer.portfolio_tracker.dto.CreatePositionRequest;
 import com.jacobschweizer.portfolio_tracker.dto.PositionResponse;
@@ -57,7 +59,7 @@ public class PositionController {
     @ResponseStatus(HttpStatus.CREATED)
     public PositionResponse addPositionToPortfolio(
             @PathVariable Long portfolioId,
-            @RequestBody CreatePositionRequest request
+            @RequestBody @Valid CreatePositionRequest request
     ) {
         Position created = portfolioService.addPositionToPortfolio(
                 portfolioId,
@@ -84,7 +86,7 @@ public class PositionController {
     public PositionResponse updatePosition(
         @PathVariable Long portfolioId,
         @PathVariable Long positionId,
-        @RequestBody UpdatePositionRequest request) {
+        @RequestBody @Valid UpdatePositionRequest request) {
 
         Position updated = portfolioService.updatePosition(
             positionId,
