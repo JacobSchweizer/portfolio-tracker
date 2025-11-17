@@ -8,15 +8,21 @@ public class PortfolioSummaryResponse {
     private String portfolioName;
     private int numberOfPositions;
     private BigDecimal totalInvested;
+    private BigDecimal currentValue;
+    private BigDecimal profit;
 
     public PortfolioSummaryResponse(Long portfolioId,
                                     String portfolioName,
                                     int numberOfPositions,
-                                    BigDecimal totalInvested) {
+                                    BigDecimal totalInvested,
+                                    BigDecimal currentValue,
+                                    BigDecimal profit) {
         this.portfolioId = portfolioId;
         this.portfolioName = portfolioName;
         this.numberOfPositions = numberOfPositions;
         this.totalInvested = totalInvested;
+        this.currentValue = currentValue;
+        this.profit = profit;
     }
 
     public Long getPortfolioId() {
@@ -33,5 +39,13 @@ public class PortfolioSummaryResponse {
 
     public BigDecimal getTotalInvested() {
         return totalInvested;
+    }
+
+    public BigDecimal getCurrentValue() {
+        return currentValue;
+    }
+
+    public BigDecimal getProfit() {
+        return profit;
     }
 }

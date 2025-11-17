@@ -8,7 +8,7 @@ import com.jacobschweizer.portfolio_tracker.exception.PortfolioNotFoundException
 import com.jacobschweizer.portfolio_tracker.exception.PositionNotFoundException;
 import com.jacobschweizer.portfolio_tracker.dto.PortfolioSummaryResponse;
 
-
+import com.jacobschweizer.portfolio_tracker.price.PriceService;
 
 import java.util.*;
 
@@ -22,12 +22,17 @@ public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
     private final PositionRepository positionRepository;  
+    private final PriceService priceService;
+
 
     public PortfolioService(PortfolioRepository portfolioRepository,
-                            PositionRepository positionRepository) {
-        this.portfolioRepository = portfolioRepository;
-        this.positionRepository = positionRepository;
-    }
+                        PositionRepository positionRepository,
+                        PriceService priceService) {
+    this.portfolioRepository = portfolioRepository;
+    this.positionRepository = positionRepository;
+    this.priceService = priceService;
+}
+
 
     // --- Portfolio methods ---
 
@@ -70,12 +75,25 @@ public class PortfolioService {
                 .map(p -> p.getQuantity().multiply(p.getAvgBuyPrice()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        // totalCurrentValue = sum(quantity * current_price_from_alpha_vantage)
+        BigDecimal totalCurrentValue = positions.stream()
+                .map(p -> {
+                    BigDecimal currentPrice = priceService.getCurrentPrice(p.getSymbol());
+                    return p.getQuantity().multiply(currentPrice);
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal unrealizedPnl = totalCurrentValue.subtract(totalInvested);
+
         return new PortfolioSummaryResponse(
                 portfolio.getId(),
                 portfolio.getName(),
                 numberOfPositions,
-                totalInvested);
-    }
+                totalInvested,
+                totalCurrentValue,
+                unrealizedPnl);
+}
+
 
 
     // --- Position methods ---
