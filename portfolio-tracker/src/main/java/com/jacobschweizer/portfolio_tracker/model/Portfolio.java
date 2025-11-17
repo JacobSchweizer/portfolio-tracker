@@ -55,4 +55,5 @@ public class Portfolio {
         position.setPortfolio(null);
     }
 
-    
+}
+
