@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.jacobschweizer.portfolio_tracker.dto.UpdatePositionRequest;
 import com.jacobschweizer.portfolio_tracker.exception.PositionNotFoundException;
+import com.jacobschweizer.portfolio_tracker.dto.PositionSummaryResponse;
+
 
 import java.util.List;
 
@@ -53,6 +55,23 @@ public class PositionController {
     }
     return toResponse(position);
     }
+
+    // GET /api/portfolios/{portfolioId}/positions/{positionId}/summary
+    @GetMapping("/{positionId}/summary")
+    public PositionSummaryResponse getPositionSummary(
+            @PathVariable Long portfolioId,
+            @PathVariable Long positionId) {
+        Position position = portfolioService.getPositionById(positionId);
+
+            // Optional safety check: ensure this position belongs to the given portfolio
+            if (!position.getPortfolio().getId().equals(portfolioId)) {
+                // you could throw PositionNotFoundException here
+                throw new PositionNotFoundException(positionId);
+            }
+
+            return portfolioService.getPositionSummary(positionId);
+    }
+
 
     // POST /api/portfolios/{portfolioId}/positions
     @PostMapping

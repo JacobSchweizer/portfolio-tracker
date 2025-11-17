@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import com.jacobschweizer.portfolio_tracker.exception.PortfolioNotFoundException;
 import com.jacobschweizer.portfolio_tracker.exception.PositionNotFoundException;
 import com.jacobschweizer.portfolio_tracker.dto.PortfolioSummaryResponse;
+import com.jacobschweizer.portfolio_tracker.dto.PositionSummaryResponse;
+
 
 import com.jacobschweizer.portfolio_tracker.price.PriceService;
 
@@ -147,6 +149,36 @@ public class PortfolioService {
     return positionRepository.findById(id)
             .orElseThrow(() -> new PositionNotFoundException(id));
     }
+
+    public PositionSummaryResponse getPositionSummary(Long positionId) {
+        Position position = positionRepository.findById(positionId)
+                .orElseThrow(() -> new PositionNotFoundException(positionId));
+
+        BigDecimal currentPrice = priceService.getCurrentPrice(position.getSymbol());
+
+        BigDecimal totalInvested =
+                position.getQuantity().multiply(position.getAvgBuyPrice());
+
+        BigDecimal currentValue =
+                position.getQuantity().multiply(currentPrice);
+
+        BigDecimal unrealizedPnl =
+                currentValue.subtract(totalInvested);
+
+        return new PositionSummaryResponse(
+                position.getId(),
+                position.getPortfolio().getId(),
+                position.getSymbol(),
+                position.getQuantity(),
+                position.getAvgBuyPrice(),
+                currentPrice,
+                totalInvested,
+                currentValue,
+                unrealizedPnl,
+                position.getBuyDate()
+        );
+    }
+
 
 
     
